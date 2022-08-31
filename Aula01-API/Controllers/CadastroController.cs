@@ -11,7 +11,7 @@ namespace Aula01_API.Controllers
         private static List<Cadastro> cadastros = new List<Cadastro>();
 
         [HttpPost]
-        public ActionResult AdicionarCadastro(Cadastro cadastro)
+        public ActionResult<Cadastro> AdicionarCadastro(Cadastro cadastro)
         {
             cadastros.Add(cadastro);
             return CreatedAtAction(nameof(AdicionarCadastro), cadastro);
@@ -28,7 +28,7 @@ namespace Aula01_API.Controllers
         }
 
         [HttpPut]
-        public ActionResult ModificarCadastro(string cpf, Cadastro cadastroNovo)
+        public ActionResult<Cadastro> ModificarCadastro(string cpf, Cadastro cadastroNovo)
         {
             var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
             
@@ -43,7 +43,7 @@ namespace Aula01_API.Controllers
         }
 
         [HttpDelete]
-        public ActionResult DeletarCadastro(string cpf)
+        public ActionResult<Cadastro> DeletarCadastro(string cpf)
         {
             var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
             if (cadastro == null)
