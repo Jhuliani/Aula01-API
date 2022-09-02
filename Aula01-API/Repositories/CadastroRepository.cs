@@ -4,7 +4,7 @@ using Dapper;
 
 namespace Aula01_API.Repositories
 {
-    
+
 
     public class CadastroRepository
     {
@@ -18,7 +18,7 @@ namespace Aula01_API.Repositories
         public List<Cadastro> GetCadastros()
         {
             var query = "SELECT * FROM base854.dbo.clientes";
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));           
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
             return conn.Query<Cadastro>(query).ToList();
         }
         public bool InsertCadastros(Cadastro cadastro)
@@ -48,7 +48,7 @@ namespace Aula01_API.Repositories
         public Cadastro GetCadastroCpf(string cpf)
         {
             var query = "SELECT * FROM Clientes WHERE cpf = @cpf";
-            var parameters = new DynamicParameters(new { cpf});
+            var parameters = new DynamicParameters(new { cpf });
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
@@ -58,7 +58,7 @@ namespace Aula01_API.Repositories
         public bool PutCadastros(string cpf, Cadastro cadastroNovo)
         {
             var query = "UPDATE base854.dbo.clientes SET cpf=@cpf, nome=@nome, dataNascimento=@dataNascimento, idade=@idade WHERE cpf = @cpf";
-           
+
             var parameters = new DynamicParameters();
             parameters.Add("novoCpf", cadastroNovo.CPF);
             parameters.Add("nome", cadastroNovo.Nome);
@@ -71,4 +71,6 @@ namespace Aula01_API.Repositories
             return conn.Execute(query, parameters) == 1;
 
         }
+
+    }
 }
