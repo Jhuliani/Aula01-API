@@ -5,19 +5,24 @@ namespace Aula01_API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
 
     public class CadastroController : ControllerBase
     {
         private static List<Cadastro> cadastros = new List<Cadastro>();
 
-        [HttpPost]
-        public ActionResult<Cadastro> AdicionarCadastro(Cadastro cadastro)
+        [HttpPost("/cadastro/cadastrar")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesErrorResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult AdicionarCadastro(Cadastro cadastro)
         {
             cadastros.Add(cadastro);
             return CreatedAtAction(nameof(RecuperarCadastro),new { CPF = cadastro.CPF }, cadastro);
         }
 
-        [HttpGet]
+        [HttpGet("/cadastro/consultar")]
+        [ProducesResponseType(StatusCodes.Status200OK)]       
         public ActionResult<IEnumerable<Cadastro>> RecuperarCadastro()
         {
             if (cadastros is null)
@@ -27,7 +32,9 @@ namespace Aula01_API.Controllers
             return cadastros;
         }
 
-        [HttpGet("/{cpf}")]
+        [HttpGet("/cadastro/{cpf}/consultar")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesErrorResponseType(StatusCodes.Status404NotFound)]
         public IActionResult RecuperarCadastro(string cpf)
         {
             var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
@@ -38,7 +45,9 @@ namespace Aula01_API.Controllers
             return Ok(cadastro);
         }
 
-        [HttpPut]
+        [HttpPut("/cadastro/{cpf}/alterar")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesErrorResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Cadastro> ModificarCadastro(string cpf, Cadastro cadastroNovo)
         {
             var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
@@ -48,12 +57,11 @@ namespace Aula01_API.Controllers
                 return NotFound();
             }
             cadastro.Nome = cadastroNovo.Nome;
-            cadastro.Nascimento = cadastroNovo.Nascimento;
-            cadastro.Idade = cadastroNovo.Idade;
+            cadastro.Nascimento = cadastroNovo.Nascimento;            
             return Ok(cadastroNovo);
         }
 
-        [HttpDelete]
+        [HttpDelete("/cadastro/{cpf}/deletar")]
         public ActionResult<Cadastro> DeletarCadastro(string cpf)
         {
             var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
