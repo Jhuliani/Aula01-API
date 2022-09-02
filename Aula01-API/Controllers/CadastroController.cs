@@ -14,7 +14,7 @@ namespace Aula01_API.Controllers
         public ActionResult<Cadastro> AdicionarCadastro(Cadastro cadastro)
         {
             cadastros.Add(cadastro);
-            return CreatedAtAction(nameof(AdicionarCadastro), cadastro);
+            return CreatedAtAction(nameof(RecuperarCadastro),new { CPF = cadastro.CPF }, cadastro);
         }
 
         [HttpGet]
@@ -25,6 +25,17 @@ namespace Aula01_API.Controllers
                 return NotFound("Cadastros não encontrados...");
             }
             return cadastros;
+        }
+
+        [HttpGet("/{cpf}")]
+        public IActionResult RecuperarCadastro(string cpf)
+        {
+            var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
+            if (cadastros is null)
+            {
+                return NotFound("Cadastros não encontrados...");
+            }
+            return Ok(cadastro);
         }
 
         [HttpPut]
