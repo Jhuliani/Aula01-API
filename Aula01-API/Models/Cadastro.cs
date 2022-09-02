@@ -13,7 +13,7 @@ namespace Aula01_API.Models
 
         [Required(ErrorMessage = "Campo Nascimento obrigatório")]
         public DateTime Nascimento { get; set; }
-
+        
         public int Idade => DateTime.Now.Year - Nascimento.Year;
     }
 }

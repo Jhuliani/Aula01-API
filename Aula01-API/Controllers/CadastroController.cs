@@ -14,7 +14,7 @@ namespace Aula01_API.Controllers
 
         [HttpPost("/cadastro/cadastrar")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        //[ProducesErrorResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult AdicionarCadastro(Cadastro cadastro)
         {
             cadastros.Add(cadastro);
@@ -22,7 +22,8 @@ namespace Aula01_API.Controllers
         }
 
         [HttpGet("/cadastro/consultar")]
-        [ProducesResponseType(StatusCodes.Status200OK)]       
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<Cadastro>> RecuperarCadastro()
         {
             if (cadastros is null)
@@ -34,7 +35,7 @@ namespace Aula01_API.Controllers
 
         [HttpGet("/cadastro/{cpf}/consultar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesErrorResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult RecuperarCadastro(string cpf)
         {
             var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
@@ -47,7 +48,7 @@ namespace Aula01_API.Controllers
 
         [HttpPut("/cadastro/{cpf}/alterar")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        //[ProducesErrorResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Cadastro> ModificarCadastro(string cpf, Cadastro cadastroNovo)
         {
             var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
