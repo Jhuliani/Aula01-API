@@ -1,4 +1,5 @@
 ﻿using Aula01_API.Models;
+using Aula01_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aula01_API.Controllers
@@ -10,27 +11,33 @@ namespace Aula01_API.Controllers
 
     public class CadastroController : ControllerBase
     {
-        private static List<Cadastro> cadastros = new List<Cadastro>();
+                
+        public CadastroRepository _repositoryCadastro;
+        public CadastroController(IConfiguration configuration)
+        {            
+            _repositoryCadastro = new CadastroRepository(configuration);
+        }
+
 
         [HttpPost("/cadastro/cadastrar")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AdicionarCadastro(Cadastro cadastro)
+        public ActionResult<Cadastro> AdicionarCadastro(Cadastro cadastro)
         {
-            cadastros.Add(cadastro);
-            return CreatedAtAction(nameof(RecuperarCadastro),new { CPF = cadastro.CPF }, cadastro);
+            if (!_repositoryCadastro.InsertCadastros(cadastro))
+            {
+                return BadRequest();
+            }          
+           
+            return CreatedAtAction(nameof(AdicionarCadastro),cadastro);
         }
 
         [HttpGet("/cadastro/consultar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<Cadastro>> RecuperarCadastro()
-        {
-            if (cadastros is null)
-            {
-                return NotFound("Cadastros não encontrados...");
-            }
-            return cadastros;
+        {                       
+            return Ok(_repositoryCadastro.GetCadastros());            
         }
 
         [HttpGet("/cadastro/{cpf}/consultar")]
@@ -38,12 +45,13 @@ namespace Aula01_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult RecuperarCadastro(string cpf)
         {
-            var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
-            if (cadastros is null)
+            var cadastro = _repositoryCadastro.GetCadastroCpf(cpf);
+            if (cadastro == null)
             {
-                return NotFound("Cadastros não encontrados...");
+                return NotFound();
             }
             return Ok(cadastro);
+            
         }
 
         [HttpPut("/cadastro/{cpf}/alterar")]
@@ -51,33 +59,26 @@ namespace Aula01_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Cadastro> ModificarCadastro(string cpf, Cadastro cadastroNovo)
         {
-            var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
-            
-            if(cadastro == null)
+                        
+            if(_repositoryCadastro.PutCadastros(cpf, cadastroNovo))
             {
                 return NotFound();
             }
-            cadastro.Nome = cadastroNovo.Nome;
-            cadastro.Nascimento = cadastroNovo.Nascimento;            
-            return Ok(cadastroNovo);
+            
+            return NoContent();
         }
 
         [HttpDelete("/cadastro/{cpf}/deletar")]
-        public ActionResult<Cadastro> DeletarCadastro(string cpf)
+        public IActionResult DeletarCadastro(string cpf)
         {
-            var cadastro = cadastros.FirstOrDefault(cadastros => cadastros.CPF == cpf);
-            if (cadastro == null)
+
+            if (!_repositoryCadastro.DeleteCadastros(cpf))
             {
                 return NotFound();
             }
-            cadastros.Remove(cadastro);
-            return Ok(cadastro);
-        }
-
-        
-
-
-        
+            
+            return NoContent();
+        }              
 
     }
 }
