@@ -11,10 +11,10 @@ namespace Aula01_API.Controllers
 
     public class CadastroController : ControllerBase
     {
-                
+
         public CadastroRepository _repositoryCadastro;
         public CadastroController(IConfiguration configuration)
-        {            
+        {
             _repositoryCadastro = new CadastroRepository(configuration);
         }
 
@@ -27,17 +27,17 @@ namespace Aula01_API.Controllers
             if (!_repositoryCadastro.InsertCadastros(cadastro))
             {
                 return BadRequest();
-            }          
-           
-            return CreatedAtAction(nameof(AdicionarCadastro),cadastro);
+            }
+
+            return CreatedAtAction(nameof(AdicionarCadastro), cadastro);
         }
 
         [HttpGet("/cadastro/consultar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<Cadastro>> RecuperarCadastro()
-        {                       
-            return Ok(_repositoryCadastro.GetCadastros());            
+        {
+            return Ok(_repositoryCadastro.GetCadastros());
         }
 
         [HttpGet("/cadastro/{cpf}/consultar")]
@@ -51,7 +51,7 @@ namespace Aula01_API.Controllers
                 return NotFound();
             }
             return Ok(cadastro);
-            
+
         }
 
         [HttpPut("/cadastro/{cpf}/alterar")]
@@ -59,12 +59,12 @@ namespace Aula01_API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Cadastro> ModificarCadastro(string cpf, Cadastro cadastroNovo)
         {
-                        
-            if(_repositoryCadastro.PutCadastros(cpf, cadastroNovo))
+
+            if (_repositoryCadastro.PutCadastros(cpf, cadastroNovo))
             {
                 return NotFound();
             }
-            
+
             return NoContent();
         }
 
@@ -81,6 +81,6 @@ namespace Aula01_API.Controllers
             
             return NoContent();
         }              
-
+        //teste
     }
 }
