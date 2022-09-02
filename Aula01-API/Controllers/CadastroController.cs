@@ -69,6 +69,8 @@ namespace Aula01_API.Controllers
         }
 
         [HttpDelete("/cadastro/{cpf}/deletar")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult DeletarCadastro(string cpf)
         {
 
