@@ -1,5 +1,6 @@
 using APIClientes.Core.Interface;
 using APIClientes.Core.Service;
+using Aula01_API.Infra.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IClienteService, ClienteService>();
-builder.Services.AddScoped<IClienteRepository, IClienteRepository>();
+builder.Services.AddScoped<IClienteRepository, CadastroRepository>();
 
 var app = builder.Build();
 
