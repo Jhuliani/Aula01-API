@@ -1,5 +1,5 @@
-﻿using Aula01_API.Models;
-using Aula01_API.Repositories;
+﻿using APIClientes.Core.Interface;
+using APIClientes.Core.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aula01_API.Controllers
@@ -12,19 +12,19 @@ namespace Aula01_API.Controllers
     public class CadastroController : ControllerBase
     {
 
-        public CadastroRepository _repositoryCadastro;
-        public CadastroController(IConfiguration configuration)
+        public IClienteService _clienteService;
+        public CadastroController(IClienteService clienteService)
         {
-            _repositoryCadastro = new CadastroRepository(configuration);
+            _clienteService = clienteService;
         }
 
 
         [HttpPost("/cadastro/cadastrar")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Cadastro> AdicionarCadastro(Cadastro cadastro)
+        public ActionResult<Cliente> AdicionarCadastro(Cliente cadastro)
         {
-            if (!_repositoryCadastro.InsertCadastros(cadastro))
+            if (!_clienteService.PostCadastro(cadastro))
             {
                 return BadRequest();
             }
@@ -35,9 +35,9 @@ namespace Aula01_API.Controllers
         [HttpGet("/cadastro/consultar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<Cadastro>> RecuperarCadastro()
+        public ActionResult<IEnumerable<Cliente>> RecuperarCadastro()
         {
-            return Ok(_repositoryCadastro.GetCadastros());
+            return Ok(_clienteService.GetCadastros());
         }
 
         [HttpGet("/cadastro/{cpf}/consultar")]
@@ -45,7 +45,7 @@ namespace Aula01_API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult RecuperarCadastro(string cpf)
         {
-            var cadastro = _repositoryCadastro.GetCadastroCpf(cpf);
+            var cadastro = _clienteService.GetCadastroCpf(cpf);
             if (cadastro == null)
             {
                 return NotFound();
@@ -57,10 +57,10 @@ namespace Aula01_API.Controllers
         [HttpPut("/cadastro/{cpf}/alterar")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Cadastro> ModificarCadastro(string cpf, Cadastro cadastroNovo)
+        public ActionResult<Cliente> ModificarCadastro(string cpf, Cliente cadastroNovo)
         {
 
-            if (_repositoryCadastro.PutCadastros(cpf, cadastroNovo))
+            if (_clienteService.PutCadastros(cpf, cadastroNovo))
             {
                 return NotFound();
             }
@@ -74,7 +74,7 @@ namespace Aula01_API.Controllers
         public IActionResult DeletarCadastro(string cpf)
         {
 
-            if (!_repositoryCadastro.DeleteCadastros(cpf))
+            if (!_clienteService.DeleteCadastros(cpf))
             {
                 return NotFound();
             }

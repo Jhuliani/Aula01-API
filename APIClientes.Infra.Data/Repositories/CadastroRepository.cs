@@ -1,12 +1,14 @@
-﻿using Aula01_API.Models;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
+using APIClientes.Core.Model;
+using APIClientes.Core.Interface;
 using Dapper;
+using Microsoft.Extensions.Configuration;
 
-namespace Aula01_API.Repositories
+namespace Aula01_API.Infra.Data.Repositories
 {
 
 
-    public class CadastroRepository
+    public class CadastroRepository : IClienteRepository
     {
         private readonly IConfiguration _configuration;
 
@@ -15,19 +17,19 @@ namespace Aula01_API.Repositories
             _configuration = configuration;
         }
 
-        public List<Cadastro> GetCadastros()
+        public List<Cliente> GetCadastros()
         {
             var query = "SELECT * FROM base854.dbo.clientes";
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-            return conn.Query<Cadastro>(query).ToList();
+            return conn.Query<Cliente>(query).ToList();
         }
-        public bool InsertCadastros(Cadastro cadastro)
+        public bool InsertCadastros(Cliente cadastro)
         {
             var query = "INSERT INTO base854.dbo.clientes VALUES(@cpf, @nome, @dataNascimento, @idade)";
             var parameters = new DynamicParameters();
             parameters.Add("cpf", cadastro.CPF);
             parameters.Add("nome", cadastro.Nome);
-            parameters.Add("dataNascimento", cadastro.Nascimento);
+            parameters.Add("dataNascimento", cadastro.DataNascimento);
             parameters.Add("idade", cadastro.Idade);
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
             return conn.Execute(query, parameters) == 1;
@@ -45,24 +47,24 @@ namespace Aula01_API.Repositories
             return conn.Execute(query, parameters) == 1;
         }
 
-        public Cadastro GetCadastroCpf(string cpf)
+        public Cliente GetCadastroCpf(string cpf)
         {
             var query = "SELECT * FROM Clientes WHERE cpf = @cpf";
             var parameters = new DynamicParameters(new { cpf });
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.QueryFirstOrDefault<Cadastro>(query, parameters);
+            return conn.QueryFirstOrDefault<Cliente>(query, parameters);
         }
 
-        public bool PutCadastros(string cpf, Cadastro cadastroNovo)
+        public bool PutCadastros(string cpf, Cliente cadastroNovo)
         {
             var query = "UPDATE base854.dbo.clientes SET cpf=@cpf, nome=@nome, dataNascimento=@dataNascimento, idade=@idade WHERE cpf = @cpf";
 
             var parameters = new DynamicParameters();
             parameters.Add("novoCpf", cadastroNovo.CPF);
             parameters.Add("nome", cadastroNovo.Nome);
-            parameters.Add("dataNascimento", cadastroNovo.Nascimento);
+            parameters.Add("dataNascimento", cadastroNovo.DataNascimento);
             parameters.Add("idade", cadastroNovo.Idade);
             parameters.Add("cpf", cpf);
 
@@ -70,6 +72,14 @@ namespace Aula01_API.Repositories
 
             return conn.Execute(query, parameters) == 1;
 
+        }
+
+        public bool PostCadastro(Cliente cliente)
+        {
+            var query = "INSERT INTO clientes VALUES (@cpf, @nome, @dataNascimento, @idade)";
+            DynamicParameters parameters = new(new { cliente.CPF, cliente.Idade, cliente.Nome, cliente.DataNascimento });
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            return conn.Execute(query, parameters) == 1;
         }
 
     }

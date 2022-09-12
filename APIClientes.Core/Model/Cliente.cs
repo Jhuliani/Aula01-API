@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Aula01_API.Models
+namespace APIClientes.Core.Model
 {
-    public class Cadastro
+    public class Cliente
     {
         [Required(ErrorMessage = "Campo CPF obrigatório")]
         public string CPF { get; set; }
@@ -12,8 +12,8 @@ namespace Aula01_API.Models
         public string Nome { get; set; }
 
         [Required(ErrorMessage = "Campo Nascimento obrigatório")]
-        public DateTime Nascimento { get; set; }
+        public DateTime DataNascimento { get; set; }
         
-        public int Idade => DateTime.Now.Year - Nascimento.Year;
+        public int Idade => DateTime.Now.Year - DataNascimento.Year;
     }
 }
