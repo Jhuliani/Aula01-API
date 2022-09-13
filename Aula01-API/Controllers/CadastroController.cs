@@ -9,7 +9,7 @@ namespace Aula01_API.Controllers
     [Route("[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    [TypeFilter(typeof(LogResourceFilter))]
+    [TypeFilter(typeof(LogActionFilter))]
 
     public class CadastroController : ControllerBase
     {
