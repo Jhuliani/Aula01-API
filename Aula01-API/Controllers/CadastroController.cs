@@ -1,5 +1,6 @@
 ﻿using APIClientes.Core.Interface;
 using APIClientes.Core.Model;
+using Aula01_API.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aula01_API.Controllers
@@ -8,6 +9,7 @@ namespace Aula01_API.Controllers
     [Route("[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [TypeFilter(typeof(LogResourceFilter))]
 
     public class CadastroController : ControllerBase
     {
@@ -22,6 +24,7 @@ namespace Aula01_API.Controllers
         [HttpPost("/cadastro/cadastrar")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ServiceFilter(typeof(LogCPFActionFilter))]
         public ActionResult<Cliente> AdicionarCadastro(Cliente cadastro)
         {
             if (!_clienteService.PostCadastro(cadastro))
@@ -35,6 +38,8 @@ namespace Aula01_API.Controllers
         [HttpGet("/cadastro/consultar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [TypeFilter(typeof(LogActionFilter))]
+        [TypeFilter(typeof(LogUpdateActionFilter))]
         public ActionResult<IEnumerable<Cliente>> RecuperarCadastro()
         {
             return Ok(_clienteService.GetCadastros());
@@ -43,6 +48,7 @@ namespace Aula01_API.Controllers
         [HttpGet("/cadastro/{cpf}/consultar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult RecuperarCadastro(string cpf)
         {
             var cadastro = _clienteService.GetCadastroCpf(cpf);
@@ -57,6 +63,7 @@ namespace Aula01_API.Controllers
         [HttpPut("/cadastro/{cpf}/alterar")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ServiceFilter(typeof(LogUpdateActionFilter))]
         public ActionResult<Cliente> ModificarCadastro(string cpf, Cliente cadastroNovo)
         {
 
