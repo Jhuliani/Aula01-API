@@ -37,9 +37,7 @@ namespace Aula01_API.Controllers
 
         [HttpGet("/cadastro/consultar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [TypeFilter(typeof(LogActionFilter))]
-        [TypeFilter(typeof(LogUpdateActionFilter))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]       
         public ActionResult<IEnumerable<Cliente>> RecuperarCadastro()
         {
             return Ok(_clienteService.GetCadastros());
